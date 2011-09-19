@@ -39,6 +39,10 @@ YUI.add("socketChat", function(Y) {
             value:"Chat here..."
         },
 
+myTextClass:{
+        value:"yui-socketChat-myText"
+        },
+
         host:{
             value:{
                 address:'http://127.0.0.1',
@@ -172,8 +176,17 @@ YUI.add("socketChat", function(Y) {
              * to attribute value changes, and also attach any DOM events,
              * to activate the UI.
              */
-            
-             // this.after("attrAChange", this._afterAttrAChange);
+                
+                   var that = this;
+                   this.chatInput.on('key', function(e){
+                      Y.log('enter pressed in chat input field'); 
+                      that.chatField.appendChild('<p class="'+ that.get('myTextClass')+'">Me: '+ that.chatInput.get('value'));
+                      that.chatInput.set('value','');
+                      that.chatField.getDOMNode().scrollTop = that.chatField.getDOMNode().scrollHeight;
+                      }, 'enter');
+
+
+            // this.after("attrAChange", this._afterAttrAChange);
         },
 
         syncUI : function() {
@@ -262,5 +275,5 @@ YUI.add("socketChat", function(Y) {
 
     Y.namespace("SocketChat").SocketChat = SocketChat;
 
- }, "3.4.0", {requires:["widget", "substitute", "node"]});
+ }, "3.4.0", {requires:["widget", "substitute", "node", 'event' ,'event-key']});
 // END WRAPPER

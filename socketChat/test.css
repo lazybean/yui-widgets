@@ -3,4 +3,10 @@
 width:500px;
 height:250px;
 border:1px solid black;
+overflow:auto;
+}
+
+.yui-socketChat-myText
+{
+color:red;
 }
