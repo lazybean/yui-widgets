@@ -48,7 +48,7 @@ myTextClass:{
                 address:'http://127.0.0.1',
                 port:'3000'
                    },
-            getter: "_gettHost"
+            getter: "_getHost"
         },
 
         attrA : {
@@ -178,12 +178,19 @@ myTextClass:{
              */
                 
                    var that = this;
+                   this.socket = this._initSocket('rtmsg', this.chatField);
                    this.chatInput.on('key', function(e){
                       Y.log('enter pressed in chat input field'); 
                       that.chatField.appendChild('<p class="'+ that.get('myTextClass')+'">Me: '+ that.chatInput.get('value'));
-                      that.chatInput.set('value','');
                       that.chatField.getDOMNode().scrollTop = that.chatField.getDOMNode().scrollHeight;
+                      that.socket.emit('chatInput', { my: this.get('value') });
+                      that.chatInput.set('value','');
                       }, 'enter');
+
+                  this.socket.on('chatOutput', function(data){
+                      that.chatField.append('<p>Somebody: '+ data.hello+'</p>');
+                  });
+
 
 
             // this.after("attrAChange", this._afterAttrAChange);
@@ -238,23 +245,23 @@ myTextClass:{
             // The default behavior for the "myEvent" event.
         },
 
-       _getAttrHost : function _getAttrHost(attrVal, attrName){
+       _getHost : function _getAttrHost(attrVal, attrName){
                 return {
                    address: attrVal.address,
                    port: attrVal.port,
                    wholeAddress: attrVal.address+':'+attrVal.port+'/'
                 }
-        }/*,
+        },
 
        _initSocket :function _initSocket(channel, field){
-               var socket = io.connect(this.get('host').wholeAddress+channel);
+               var socket = Y.SocketIO.io.connect(this.get('host').wholeAddress+channel);
                socket.on('news', function (data) {
-                   console.log("received data from socket"+data);
+                   Y.log("received data from socket"+data);
                    field.append(data.hello);
                    socket.emit('my other event', { my: 'data' });
                    }, 'enter');
                return socket;
-             },
+             }/*,
 
        _initChatInput: function initChatInput(socket, chat){
                   var inputText = Y.one('#hereChatInput');
@@ -275,5 +282,5 @@ myTextClass:{
 
     Y.namespace("SocketChat").SocketChat = SocketChat;
 
- }, "3.4.0", {requires:["widget", "substitute", "node", 'event' ,'event-key']});
+ }, "3.4.0", {requires:["widget", "substitute", "node", 'event' ,'event-key', 'socketio']});
 // END WRAPPER
